@@ -132,7 +132,7 @@ export function TournamentWizard({ onComplete, onCancel }: TournamentWizardProps
               {step === 1 ? 'Cancel' : 'Back'}
             </Button>
             <Button onClick={handleNext} disabled={!canProceed()}>
-              {step === 3 ? 'Create Tournament' : 'Next'}
+              {step === 3 ? 'Finish Tournament Setup' : 'Next'}
             </Button>
           </div>
         </Card>
