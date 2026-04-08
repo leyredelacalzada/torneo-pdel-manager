@@ -5,9 +5,10 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
-import { Plus, MagnifyingGlass } from '@phosphor-icons/react'
+import { Plus, MagnifyingGlass, PencilSimple } from '@phosphor-icons/react'
 import { Tournament, Team, Player } from '@/lib/types'
 import { toast } from 'sonner'
+import { EditTeamDialog } from './EditTeamDialog'
 
 type TeamsTabProps = {
   tournament: Tournament
@@ -19,6 +20,8 @@ export function TeamsTab({ tournament, teams, setTeams }: TeamsTabProps) {
   const [selectedCategory, setSelectedCategory] = useState(tournament.categories[0]?.id || '')
   const [searchQuery, setSearchQuery] = useState('')
   const [showAddDialog, setShowAddDialog] = useState(false)
+  const [showEditDialog, setShowEditDialog] = useState(false)
+  const [selectedTeam, setSelectedTeam] = useState<Team | null>(null)
   const [player1Name, setPlayer1Name] = useState('')
   const [player2Name, setPlayer2Name] = useState('')
 
@@ -48,6 +51,20 @@ export function TeamsTab({ tournament, teams, setTeams }: TeamsTabProps) {
     setPlayer2Name('')
     setShowAddDialog(false)
     toast.success('Team added successfully')
+  }
+
+  const handleEditTeam = (team: Team) => {
+    setSelectedTeam(team)
+    setShowEditDialog(true)
+  }
+
+  const handleSaveTeam = (updatedTeam: Team) => {
+    setTeams(prev => {
+      if (!prev) return [updatedTeam]
+      return prev.map(t => t.id === updatedTeam.id ? updatedTeam : t)
+    })
+    setShowEditDialog(false)
+    setSelectedTeam(null)
   }
 
   return (
@@ -152,17 +169,27 @@ export function TeamsTab({ tournament, teams, setTeams }: TeamsTabProps) {
                           {tournament.categories.find(c => c.id === team.categoryId)?.name}
                         </div>
                       </div>
-                      <div className="flex gap-2">
-                        {team.checkedIn && (
-                          <span className="text-xs px-2 py-1 bg-success/10 text-success-foreground rounded">
-                            Checked In
-                          </span>
-                        )}
-                        {team.paid && (
-                          <span className="text-xs px-2 py-1 bg-primary/10 text-primary rounded">
-                            Paid
-                          </span>
-                        )}
+                      <div className="flex gap-2 items-center">
+                        <div className="flex gap-2">
+                          {team.checkedIn && (
+                            <span className="text-xs px-2 py-1 bg-success/10 text-success-foreground rounded">
+                              Checked In
+                            </span>
+                          )}
+                          {team.paid && (
+                            <span className="text-xs px-2 py-1 bg-primary/10 text-primary rounded">
+                              Paid
+                            </span>
+                          )}
+                        </div>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => handleEditTeam(team)}
+                        >
+                          <PencilSimple className="mr-2" size={16} />
+                          Edit
+                        </Button>
                       </div>
                     </div>
                   </Card>
@@ -172,6 +199,14 @@ export function TeamsTab({ tournament, teams, setTeams }: TeamsTabProps) {
           </div>
         </div>
       </Card>
+
+      <EditTeamDialog
+        team={selectedTeam}
+        tournament={tournament}
+        open={showEditDialog}
+        onOpenChange={setShowEditDialog}
+        onSave={handleSaveTeam}
+      />
     </div>
   )
 }
