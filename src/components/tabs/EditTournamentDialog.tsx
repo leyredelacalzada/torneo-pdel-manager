@@ -1,11 +1,11 @@
 import { useState } from 'react'
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog'
-import { Textarea } from '@/components/ui/tex
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import { Textarea } from '@/components/ui/textarea'
 import { Tournament } from '@/lib/types'
-
-  tournament: Tournament
-  onOpenChange: (open: boolean) => void
-}
+import { toast } from 'sonner'
 
 type EditTournamentDialogProps = {
   tournament: Tournament
@@ -16,19 +16,24 @@ type EditTournamentDialogProps = {
 
 export function EditTournamentDialog({ tournament, open, onOpenChange, onSave }: EditTournamentDialogProps) {
   const [formData, setFormData] = useState({
-      matchDuration: parse
-      tournamentEnd: formData.tournamentEnd,
-      registrationEnd: for
+    name: tournament.name,
+    description: tournament.description || '',
+    club: tournament.club,
+    venue: tournament.venue,
+    matchDuration: tournament.matchDuration.toString(),
+    tournamentStart: tournament.tournamentStart,
+    tournamentEnd: tournament.tournamentEnd,
+    registrationStart: tournament.registrationStart,
+    registrationEnd: tournament.registrationEnd,
+  })
 
-    toast.success('Tournament information updated')
-  }
-  return (
-      <DialogContent className="max-w-2xl max-h-[90v
-          <DialogTitle>Edit Tournament Informati
+  const handleSave = () => {
+    if (!formData.name.trim()) {
+      toast.error('Tournament name is required')
+      return
+    }
 
-
-            <Input
-              value={formData.nam
+    const updated: Tournament = {
       ...tournament,
       name: formData.name.trim(),
       description: formData.description.trim(),
@@ -66,96 +71,99 @@ export function EditTournamentDialog({ tournament, open, onOpenChange, onSave }:
           <div className="space-y-2">
             <Label htmlFor="description">Description</Label>
             <Textarea
-          </div>
+              id="description"
               value={formData.description}
               onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-              
-              />
+              rows={3}
+            />
+          </div>
 
           <div className="grid grid-cols-2 gap-4">
-          <Button variant="outline" onC
+            <div className="space-y-2">
+              <Label htmlFor="club">Club</Label>
+              <Input
+                id="club"
+                value={formData.club}
+                onChange={(e) => setFormData({ ...formData, club: e.target.value })}
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="venue">Venue</Label>
+              <Input
+                id="venue"
+                value={formData.venue}
+                onChange={(e) => setFormData({ ...formData, venue: e.target.value })}
+              />
+            </div>
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="matchDuration">Match Duration (minutes)</Label>
+            <Input
+              id="matchDuration"
+              type="number"
+              value={formData.matchDuration}
+              onChange={(e) => setFormData({ ...formData, matchDuration: e.target.value })}
+              min="30"
+              step="15"
+            />
+          </div>
+
+          <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label htmlFor="registrationStart">Registration Start</Label>
+              <Input
+                id="registrationStart"
+                type="datetime-local"
+                value={formData.registrationStart}
+                onChange={(e) => setFormData({ ...formData, registrationStart: e.target.value })}
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="registrationEnd">Registration End</Label>
+              <Input
+                id="registrationEnd"
+                type="datetime-local"
+                value={formData.registrationEnd}
+                onChange={(e) => setFormData({ ...formData, registrationEnd: e.target.value })}
+              />
+            </div>
+          </div>
+
+          <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label htmlFor="tournamentStart">Tournament Start</Label>
+              <Input
+                id="tournamentStart"
+                type="datetime-local"
+                value={formData.tournamentStart}
+                onChange={(e) => setFormData({ ...formData, tournamentStart: e.target.value })}
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="tournamentEnd">Tournament End</Label>
+              <Input
+                id="tournamentEnd"
+                type="datetime-local"
+                value={formData.tournamentEnd}
+                onChange={(e) => setFormData({ ...formData, tournamentEnd: e.target.value })}
+              />
+            </div>
+          </div>
+        </div>
+
+        <DialogFooter>
+          <Button variant="outline" onClick={() => onOpenChange(false)}>
+            Cancel
           </Button>
-            Save Cha
-        </DialogFooter>
-    </Dialog>
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+          <Button onClick={handleSave}>
             Save Changes
-
+          </Button>
         </DialogFooter>
-
+      </DialogContent>
     </Dialog>
-
+  )
 }
